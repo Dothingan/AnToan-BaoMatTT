@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vigenère Cipher</title>
+    <style>
+        .form-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        label {
+            min-width: 80px;
+        }
+        input {
+            flex: 1;
+            padding: 10px;
+        }
+        button {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+
+        function vigenereEncrypt(plaintext, keyword) {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let result = '';
+            plaintext = plaintext.toUpperCase();
+            keyword = keyword.toUpperCase();
+            
+            let keywordIndex = 0;
+
+            for (let i = 0; i < plaintext.length; i++) {
+                const char = plaintext[i];
+
+                if (alphabet.includes(char)) {
+                    const plainIndex = alphabet.indexOf(char);
+                    const keyIndex = alphabet.indexOf(keyword[keywordIndex % keyword.length]);
+                    const encryptedIndex = (plainIndex + keyIndex) % 26; // mod 26
+                    result += alphabet[encryptedIndex];
+
+                    keywordIndex++;
+                } else {
+                    result += char; // Giữ nguyên ký tự không phải chữ cái
+                }
+            }
+
+            return result;
+        }
+
+
+        function vigenereDecrypt(ciphertext, keyword) {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let result = '';
+            ciphertext = ciphertext.toUpperCase();
+            keyword = keyword.toUpperCase();
+            
+            let keywordIndex = 0;
+
+            for (let i = 0; i < ciphertext.length; i++) {
+                const char = ciphertext[i];
+
+                if (alphabet.includes(char)) {
+                    const cipherIndex = alphabet.indexOf(char);
+                    const keyIndex = alphabet.indexOf(keyword[keywordIndex % keyword.length]);
+                    const decryptedIndex = (cipherIndex - keyIndex + 26) % 26; // mod 26
+                    result += alphabet[decryptedIndex];
+
+                    keywordIndex++;
+                } else {
+                    result += char; // Giữ nguyên ký tự không phải chữ cái
+                }
+            }
+
+            return result;
+        }
+
+        function Mahoa() {
+            const inputText = document.getElementById('inputText').value;
+            const key = document.getElementById('key').value;
+            const encrypted = vigenereEncrypt(inputText, key);
+            document.getElementById('mahoa').value = encrypted;
+        }
+
+        function Giaima() {
+            const inputText = document.getElementById('mahoa').value;
+            const key = document.getElementById('key').value;
+            const decrypted = vigenereDecrypt(inputText, key);
+            document.getElementById('giaima').value = decrypted;
+        }
+    </script>
+</head>
+<body>
+    <div class="containt">
+        <div class="form-row">
+            <label for="inputText">Input Text</label>
+            <input type="text" id="inputText">
+        </div>
+        <div class="form-row">
+            <label for="key">Key</label>
+            <input type="text" id="key">
+        </div>
+        <div class="form-row">
+            <label for="mahoa">Ban ma</label>
+            <input type="text" id="mahoa" readonly>
+        </div>
+        <div class="form-row">
+            <label for="giaima">Ban ro</label>
+            <input type="text" id="giaima" readonly>
+        </div>
+        <button onclick="Mahoa()">Ma hoa</button>
+        <button onclick="Giaima()">Giai ma</button>
+    </div>
+</body>
+</html>
