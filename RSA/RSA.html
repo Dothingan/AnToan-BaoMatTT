@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSA Encryption/Decryption</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px;
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>RSA Encryption/Decryption</h2>
+
+        <h3>Plain Text</h3>
+        <textarea id="plainText"></textarea>
+
+        <h3>Encrypted Text</h3>
+        <div class="result" id="encryptedText"></div>
+
+        <h3>Decrypted Text</h3>
+        <div class="result" id="decryptedText"></div>
+
+        <button onclick="encrypt()">Encrypt</button>
+        <button onclick="decrypt()">Decrypt</button>
+    </div>
+
+    <!-- Thêm thư viện jsencrypt -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.0.0/jsencrypt.min.js"></script>
+
+    <script>
+        // Tạo cặp khóa RSA
+        const crypt = new JSEncrypt();
+        const publicKey = crypt.getKey().getPublicBaseKeyB64();
+        const privateKey = crypt.getKey().getPrivateBaseKeyB64();
+
+        function encrypt() {
+            const plainText = document.getElementById('plainText').value;
+
+            // Tạo đối tượng mã hóa với public key
+            const encryptor = new JSEncrypt();
+            encryptor.setPublicKey(publicKey);
+
+            // Mã hóa văn bản
+            const encrypted = encryptor.encrypt(plainText);
+            document.getElementById('encryptedText').textContent = encrypted;
+        }
+
+        function decrypt() {
+            const encryptedText = document.getElementById('encryptedText').textContent;
+
+            // Tạo đối tượng giải mã với private key
+            const decryptor = new JSEncrypt();
+            decryptor.setPrivateKey(privateKey);
+
+            // Giải mã văn bản
+            const decrypted = decryptor.decrypt(encryptedText);
+            document.getElementById('decryptedText').textContent = decrypted;
+        }
+    </script>
+</body>
+</html>
+
+
+<!-- sử dụng thư viện 
+cài đặt thuật toán với p q ko phải là các số nguyên tố lớn 
+cài đặt thuật toán với p q sử dụng số lớn
+tích hợp nội dung mã hóa dữ liệu và giải mã trong file (nhấn chuột trái thì có tính năng này) 
+web: xây dựng trong web cung cấp cho người dùng công cụ mã hóa, cấp phát bộ nhớ cho người dùng như dropbox nhưng các file được mã hóa
+-->
