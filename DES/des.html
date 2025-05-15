@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DES Hex Encryption</title>
+    <style>
+        .form_row {
+            margin-bottom: 10px;
+            display: flex;
+        }
+
+        .label {
+            min-width: 100px;
+        }
+
+        .input {
+            flex: 1;
+        }
+
+        button {
+            background-color: #036f2f;
+            color: white;
+            margin: 5px;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script>
+        function maHoaDES() {
+            // Lấy giá trị thập lục phân từ đầu vào
+            let messageHex = document.getElementById("inputText").value;
+            let keyHex = document.getElementById("inputKey").value;
+            
+            // Chuyển đổi từ Hex sang WordArray
+            let message = CryptoJS.enc.Hex.parse(messageHex);
+            let key = CryptoJS.enc.Hex.parse(keyHex);
+
+            // Mã hóa DES với chế độ ECB và không có padding
+            let encrypted = CryptoJS.DES.encrypt(message, key, {
+                mode: CryptoJS.mode.ECB,
+                padding: CryptoJS.pad.NoPadding
+            });
+
+            // Hiển thị kết quả đã mã hóa
+            document.getElementById("outputText").value = encrypted.ciphertext.toString();
+        }
+
+        function giaiMaDES() {
+            // Lấy giá trị thập lục phân đã mã hóa
+            let encryptedHex = document.getElementById("outputText").value;
+            let keyHex = document.getElementById("inputKey").value;
+
+            // Chuyển đổi từ Hex sang WordArray
+            let key = CryptoJS.enc.Hex.parse(keyHex);
+            let encrypted = CryptoJS.enc.Hex.parse(encryptedHex);
+
+            // Giải mã DES với chế độ ECB và không có padding
+            let decrypted = CryptoJS.DES.decrypt(
+                { ciphertext: encrypted },
+                key,
+                { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.NoPadding }
+            );
+
+            // Hiển thị kết quả đã giải mã
+            document.getElementById("decryptedText").value = decrypted.toString(CryptoJS.enc.Hex);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="form_row">
+            <label class="label" for="inputText">Input Hex (M)</label>
+            <input class="input" type="text" id="inputText" value="0123456789ABCDEF">
+        </div>
+        <div class="form_row">
+            <label class="label" for="inputKey">Key Hex (K)</label>
+            <input class="input" type="text" id="inputKey" value="13345799BBCDDFF1">
+        </div>
+        <div class="form_row">
+            <label class="label" for="outputText">Encrypted Hex</label>
+            <input class="input" type="text" id="outputText" readonly>
+        </div>
+        <div class="form_row">
+            <label class="label" for="decryptedText">Decrypted Hex</label>
+            <input class="input" type="text" id="decryptedText" readonly>
+        </div>
+        <div>
+            <button type="button" onclick="maHoaDES()">Encrypt</button>
+            <button type="button" onclick="giaiMaDES()">Decrypt</button>
+        </div>
+    </div>
+</body>
+</html>

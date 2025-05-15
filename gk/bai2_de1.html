@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mã hóa RSA và ghi tệp</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Mã hóa RSA</h2>
+        <label for="message">Thông điệp cần mã hóa:</label>
+        <input type="text" id="message" value="IlovePhenikaa" placeholder="Nhập thông điệp...">
+        <button onclick="encryptRSA()">Mã hóa và ghi ra tệp</button>
+        
+        <div id="result"></div>
+        <a id="downloadLink" style="display: none;" download="rsa-encrypt.dat">Tải tệp mã hóa</a>
+    </div>
+
+    <script>
+        // Hàm tính lũy thừa mô đun
+        function modExp(base, exp, mod) {
+            let result = 1;
+            base = base % mod;
+            while (exp > 0) {
+                if (exp % 2 === 1) {
+                    result = (result * base) % mod;
+                }
+                exp = Math.floor(exp / 2);
+                base = (base * base) % mod;
+            }
+            return result;
+        }
+
+        // Hàm mã hóa RSA
+        function encryptRSA() {
+            const message = document.getElementById('message').value;
+            const p = 19, q = 37; // cặp số nguyên tố p và q
+            const n = p * q; // n = p * q
+            const phi = (p - 1) * (q - 1); // phi(n) = (p-1)*(q-1)
+            const e = 19; // Số nguyên e = 19 (thỏa mãn 1 < e < phi và gcd(e, phi) = 1)
+
+            // Mã hóa từng ký tự trong thông điệp
+            const messageChars = message.split('');
+            let encryptedMessage = [];
+
+            for (let i = 0; i < messageChars.length; i++) {
+                let charCode = messageChars[i].charCodeAt(0);
+
+                // Mã hóa ký tự sử dụng công thức RSA: c = (m^e) % n
+                let encryptedChar = modExp(charCode, e, n);
+                encryptedMessage.push(encryptedChar);
+            }
+
+            // Hiển thị kết quả mã hóa
+            document.getElementById('result').innerHTML = `<strong>Bản mã hóa RSA:</strong> [${encryptedMessage.join(', ')}]`;
+
+            // Ghi bản mã ra tệp rsa-encrypt.dat
+            saveToFile(encryptedMessage);
+        }
+
+        // Hàm ghi bản mã ra tệp
+        function saveToFile(encryptedMessage) {
+            const blob = new Blob([encryptedMessage.join(', ')], { type: 'text/plain' });
+            const link = document.getElementById('downloadLink');
+            link.href = URL.createObjectURL(blob);
+            link.style.display = 'block'; // Hiển thị nút tải tệp
+        }
+    </script>
+</body>
+</html>

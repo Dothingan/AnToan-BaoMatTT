@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MD5 & DES Encryption</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>MD5 Hash & DES Encryption</h2>
+
+        <!-- Input File -->
+        <label for="fileInput">Choose a file:</label>
+        <input type="file" id="fileInput">
+
+        <!-- Input Key -->
+        <label for="desKey">DES Encryption Key:</label>
+        <input type="text" id="desKey" placeholder="Enter DES key">
+
+        <!-- Buttons for actions -->
+        <button id="processBtn">Process File</button>
+
+        <!-- Result display -->
+        <div class="result">
+            <h4>Result</h4>
+            <pre id="resultText"></pre>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('processBtn').addEventListener('click', function () {
+            const fileInput = document.getElementById('fileInput');
+            const desKey = document.getElementById('desKey').value;
+            const resultText = document.getElementById('resultText');
+
+            if (fileInput.files.length === 0) {
+                alert("Vui lòng chọn file.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const fileContent = e.target.result;
+                
+                // Step 1: Hash the file content using MD5
+                const hashValue = CryptoJS.MD5(fileContent).toString();
+                console.log("MD5 Hash:", hashValue);
+
+                // Step 2: Append the hash value to the file content
+                const contentWithHash = fileContent + hashValue;
+
+                // Step 3: Encrypt the combined content (file + hash) using DES
+                const encrypted = CryptoJS.DES.encrypt(contentWithHash, desKey).toString();
+                console.log("Encrypted (DES):", encrypted);
+
+                // Output result
+                resultText.textContent = `MD5 Hash: ${hashValue}\nEncrypted Content (DES): ${encrypted}`;
+
+                // Step 4: Save encrypted content to rsa-encrypt.dat file
+                saveToFile(encrypted, 'rsa-encrypt.dat');
+            };
+
+            reader.readAsText(file);
+        });
+
+        // Function to save result to a file
+        function saveToFile(content, filename) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+//         // Hàm tính giá trị băm MD5 của tệp X
+// function hashMD5(fileContent) {
+//     // Sử dụng thư viện crypto hoặc viết hàm MD5 để tính giá trị băm
+//     return CryptoJS.MD5(fileContent).toString();
+// }
+
+// // Hàm mã hóa bằng DES
+// function encryptDES(content, key) {
+//     return CryptoJS.DES.encrypt(content, key).toString();
+// }
+
+// // Kiểm tra tính toàn vẹn của tệp X
+// function verifyIntegrity(fileContent, key) {
+//     // Bước 1: Tính giá trị băm của tệp X
+//     const hashValue = hashMD5(fileContent);
+
+//     // Bước 2: Thêm giá trị băm vào cuối tệp
+//     const fileWithHash = fileContent + hashValue;
+
+//     // Bước 3: Mã hóa tệp X (kèm giá trị băm) bằng DES
+//     const encryptedFile = encryptDES(fileWithHash, key);
+
+//     // Bước 4: Kiểm tra tính toàn vẹn sau khi mã hóa
+//     return encryptedFile;
+// }
+function verifyIntegrity(decryptedContent) {
+    const fileContent = decryptedContent.slice(0, -32); // Loại bỏ phần băm cuối cùng
+    const originalHash = decryptedContent.slice(-32);   // Giá trị băm MD5 gốc
+    const currentHash = calculateMD5(fileContent);      // Tính lại băm MD5
+
+    return originalHash === currentHash; // Trả về true nếu giống nhau, nghĩa là đảm bảo tính toàn vẹn
+}
+
+    </script>
+</body>
+</html>

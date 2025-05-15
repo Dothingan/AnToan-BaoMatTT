@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AES Encryption</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+</head>
+<body>
+    <h2>Mã hóa AES với khóa từ mật khẩu</h2>
+    <form id="aesForm">
+        <label for="message">Thông điệp:</label>
+        <input type="text" id="message" value="IlovePhenikaa" readonly><br><br>
+
+        <label for="password">Mật khẩu:</label>
+        <input type="password" id="password" placeholder="Nhập mật khẩu"><br><br>
+
+        <button type="button" onclick="encryptAES()">Mã hóa và ghi tệp</button>
+    </form>
+
+    <p id="ciphertext"></p>
+
+    <script>
+        function encryptAES() {
+            const message = document.getElementById("message").value;
+            const password = document.getElementById("password").value;
+
+            if (!password) {
+                alert("Vui lòng nhập mật khẩu");
+                return;
+            }
+
+            // Mã hóa AES
+            const ciphertext = CryptoJS.AES.encrypt(message, password).toString();
+
+            // Hiển thị bản mã trên trang web
+            document.getElementById("ciphertext").innerText = "Bản mã AES: " + ciphertext;
+
+            // Ghi bản mã vào tệp aes-encrypt.dat (trong thực tế cần server-side để ghi tệp)
+            const blob = new Blob([ciphertext], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'aes-encrypt.dat';
+            link.click();
+        }
+    </script>
+</body>
+</html>

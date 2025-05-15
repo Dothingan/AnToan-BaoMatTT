@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MD5 Hash Comparison</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MD5 Hash Comparison Tool</h1>
+        <input type="text" id="input1" placeholder="Enter first string">
+        <input type="text" id="input2" placeholder="Enter second string">
+        <button id="compareBtn">Compare Hashes</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        async function computeMD5(str) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(str);
+            const hashBuffer = await crypto.subtle.digest('MD5', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function countDiffBits(hash1, hash2) {
+            let diffBits = 0;
+            for (let i = 0; i < hash1.length; i++) {
+                const xor = parseInt(hash1[i], 16) ^ parseInt(hash2[i], 16);
+                diffBits += (xor.toString(2).match(/1/g) || []).length;
+            }
+            return diffBits;
+        }
+
+        document.getElementById('compareBtn').addEventListener('click', async () => {
+            const input1 = document.getElementById('input1').value;
+            const input2 = document.getElementById('input2').value;
+
+            const hash1 = await computeMD5(input1);
+            const hash2 = await computeMD5(input2);
+
+            const diffBits = countDiffBits(hash1, hash2);
+            document.getElementById('result').innerText = `Number of differing bits between hashes: ${diffBits}`;
+        });
+    </script>
+</body>
+</html>

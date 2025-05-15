@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mã hóa Vigenere & RSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Loại mã hóa</h2>
+            <ul>
+                <li><a href="#vigenere">Mã hóa Vigenere</a></li>
+                <li><a href="#rsa">Mã hóa RSA</a></li>
+            </ul>
+        </div>
+        <div class="content">
+            <!-- Vigenere Section -->
+            <section id="vigenere">
+                <h2>Mã hóa Vigenere</h2>
+                <label for="email">Nhập email của bạn:</label>
+                <input type="text" id="email" placeholder="Nhập email...">
+                <button onclick="encryptVigenere()">Mã hóa</button>
+                <div class="result">
+                    <label for="vigenere-result">Kết quả mã hóa:</label>
+                    <input type="text" id="vigenere-result" readonly>
+                </div>
+            </section>
+
+            <!-- RSA Section -->
+            <section id="rsa">
+                <h2>Mã hóa RSA</h2>
+                <label for="rsa-message">Thông điệp RSA:</label>
+                <input type="text" id="rsa-message" value="IlovePhenikaa" readonly>
+                <button onclick="encryptRSA()">Mã hóa</button>
+                <div class="result">
+                    <label for="rsa-result">Kết quả RSA:</label>
+                    <textarea id="rsa-result" readonly></textarea>
+                </div>
+            </section>
+        </div>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>

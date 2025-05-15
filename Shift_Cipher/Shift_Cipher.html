@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .form_row {
+            margin-bottom: 10px;
+            display: flex;
+        }
+
+        .label{
+            min-width: 80px;
+        }
+
+        .input{
+            flex: 1;
+        }
+
+        button{
+            background-color: rgb(3, 59, 24);
+            color: aliceblue;
+        }
+    </style>
+    <script>
+        function maDichVong() {
+            // Lấy giá trị từ input text và key
+            let inputText = document.getElementById("inputText").value;
+            let key = parseInt(document.getElementById("inputKey").value);
+            let outputText = '';
+
+            // Duyệt qua từng ký tự trong chuỗi input
+            for (let i = 0; i < inputText.length; i++) {
+                let char = inputText[i];
+
+                // Kiểm tra nếu ký tự là chữ cái thường (a-z)
+                if (char >= 'a' && char <= 'z') {
+                    outputText += String.fromCharCode(((char.charCodeAt(0) - 97 + key) % 26) + 97);
+                }
+                // Kiểm tra nếu ký tự là chữ cái in hoa (A-Z)
+                else if (char >= 'A' && char <= 'Z') {
+                    outputText += String.fromCharCode(((char.charCodeAt(0) - 65 + key) % 26) + 65);
+                }
+                // Các ký tự khác không mã hóa
+                else {
+                    outputText += char;
+                }
+            }
+
+        // Hiển thị kết quả trong trường outputText
+        document.getElementById("outputText").value = outputText;
+        }
+
+        function giaiMaDichVong() {
+            // Lấy giá trị từ output text và key
+            let inputGiaiMa = document.getElementById("outputText").value;
+            let key = parseInt(document.getElementById("inputKey").value);
+            let banRo = '';
+
+            // Duyệt qua từng ký tự trong chuỗi output (bản mã)
+            for (let i = 0; i < inputGiaiMa.length; i++) {
+                let char = inputGiaiMa[i];
+
+                // Kiểm tra nếu ký tự là chữ cái thường (a-z)
+                if (char >= 'a' && char <= 'z') {
+                    banRo += String.fromCharCode(((char.charCodeAt(0) - 97 - key + 26) % 26) + 97);
+                }
+                // Kiểm tra nếu ký tự là chữ cái in hoa (A-Z)
+                else if (char >= 'A' && char <= 'Z') {
+                    banRo += String.fromCharCode(((char.charCodeAt(0) - 65 - key + 26) % 26) + 65);
+                }
+                // Các ký tự khác không mã hóa
+                else {
+                    banRo += char;
+                }
+            }
+
+            // Hiển thị kết quả trong trường banRo
+            document.getElementById("banRo").value = banRo;
+        }
+        
+
+    </script>
+</head>
+<body>
+    <div class="contain">
+        <div class="form_row">
+            <label class="label" for="inputText">Input text</label>
+            <input class="input" type="text" id="inputText">            
+        </div>
+        <div class="form_row">
+            <label class="label" for="inputFile">Input file</label>
+            <input class="input" type="text" id="inputFile">            
+        </div>
+        <div class="form_row">
+            <label class="label" for="inputKey">Input key</label>
+            <input class="input" type="number" id="inputKey">   
+        </div>
+        <div class="form_row">
+            <label class="label" for="outputText">Ban ma</label>
+            <input class="input" type="text" id="outputText" readonly>   
+        </div>
+        <div class="form_row">
+            <label class="label" for="label" for="giaiMa">Ban ro</label>
+            <input class="input" type="text" id="banRo" readonly>
+        </div>
+        <input type="checkbox">
+        <label for="checkbox">Co xoa ban ro</label>
+        <div class="button">
+            <button type="button" onclick="maDichVong()">Mã hoá</button>
+            <button type="button" onclick="giaiMaDichVong()">Giải mã</button>
+
+        </div>
+    </div>
+
+
+</body>
+</html>

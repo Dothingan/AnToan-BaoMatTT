@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Affine Cipher</title>
+    <style>
+        .form_row {
+            margin-bottom: 10px;
+            display: flex;
+        }
+
+        .label{
+            min-width: 80px;
+        }
+
+        .input{
+            flex: 1;
+        }
+
+        button{
+            background-color: rgb(3, 59, 24);
+            color: aliceblue;
+        }
+    </style>
+    <script>
+        // Hàm tính GCD (Greatest Common Divisor) để kiểm tra tính tương thích của a với 26
+        function gcd(a, b) {
+            return b === 0 ? a : gcd(b, a % b);
+        }
+
+        // Hàm nghịch đảo modular
+        function modInverse(a, m) {
+            for (let x = 1; x < m; x++) {
+                if ((a * x) % m === 1) {
+                    return x;
+                }
+            }
+            return 1;  // Nếu không tìm thấy nghịch đảo, trả về 1
+        }
+
+        // Hàm mã hóa affine cipher
+        function maHoaAffine() {
+            let inputText = document.getElementById("inputText").value;
+            let a = parseInt(document.getElementById("inputA").value);
+            let b = parseInt(document.getElementById("inputB").value);
+            let outputText = '';
+
+            if (gcd(a, 26) !== 1) {
+                alert("Giá trị a phải nguyên tố cùng nhau với 26");
+                return;
+            }
+
+            for (let i = 0; i < inputText.length; i++) {
+                let char = inputText[i];
+
+                if (char >= 'a' && char <= 'z') {
+                    let x = char.charCodeAt(0) - 97;
+                    outputText += String.fromCharCode(((a * x + b) % 26) + 97);
+                } else if (char >= 'A' && char <= 'Z') {
+                    let x = char.charCodeAt(0) - 65;
+                    outputText += String.fromCharCode(((a * x + b) % 26) + 65);
+                } else {
+                    outputText += char; // Giữ nguyên các ký tự không phải chữ cái
+                }
+            }
+
+            document.getElementById("outputText").value = outputText;
+        }
+
+        // Hàm giải mã affine cipher
+        function giaiMaAffine() {
+            let inputText = document.getElementById("outputText").value;
+            let a = parseInt(document.getElementById("inputA").value);
+            let b = parseInt(document.getElementById("inputB").value);
+            let banRo = '';
+
+            if (gcd(a, 26) !== 1) {
+                alert("Giá trị a phải nguyên tố cùng nhau với 26");
+                return;
+            }
+
+            let aInverse = modInverse(a, 26);
+
+            for (let i = 0; i < inputText.length; i++) {
+                let char = inputText[i];
+
+                if (char >= 'a' && char <= 'z') {
+                    let y = char.charCodeAt(0) - 97;
+                    banRo += String.fromCharCode(((aInverse * (y - b + 26)) % 26) + 97);
+                } else if (char >= 'A' && char <= 'Z') {
+                    let y = char.charCodeAt(0) - 65;
+                    banRo += String.fromCharCode(((aInverse * (y - b + 26)) % 26) + 65);
+                } else {
+                    banRo += char; // Giữ nguyên các ký tự không phải chữ cái
+                }
+            }
+
+            document.getElementById("banRo").value = banRo;
+        }
+    </script>
+</head>
+<body>
+    <div class="contain">
+        <div class="form_row">
+            <label class="label" for="inputText">Input text</label>
+            <input class="input" type="text" id="inputText">            
+        </div>
+        <div class="form_row">
+            <label class="label" for="inputA">Key a</label>
+            <input class="input" type="number" id="inputA" min="1" value="1">   
+        </div>
+        <div class="form_row">
+            <label class="label" for="inputB">Key b</label>
+            <input class="input" type="number" id="inputB" value="0">   
+        </div>
+        <div class="form_row">
+            <label class="label" for="outputText">Bản mã</label>
+            <input class="input" type="text" id="outputText" readonly>   
+        </div>
+        <div class="form_row">
+            <label class="label" for="banRo">Bản rõ</label>
+            <input class="input" type="text" id="banRo" readonly>
+        </div>
+        <div class="button">
+            <button type="button" onclick="maHoaAffine()">Mã hóa</button>
+            <button type="button" onclick="giaiMaAffine()">Giải mã</button>
+        </div>
+    </div>
+</body>
+</html>

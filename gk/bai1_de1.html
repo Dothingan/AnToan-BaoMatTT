@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mã hóa Vigenere</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Mã hóa Email với Vigenere</h2>
+        <label for="email">Nhập email của bạn:</label>
+        <input type="text" id="email" placeholder="Nhập email...">
+        <button onclick="encryptVigenere()">Mã hóa</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Hàm để mã hóa Vigenere
+        function encryptVigenere() {
+            const email = document.getElementById('email').value;
+            const key = [2, 7, 15, 27]; // Khóa K = [2, 7, 15, 27]
+            const base = 26 + 3; // Z(26+3)
+            const emailChars = email.split('');
+            let encryptedEmail = '';
+
+            for (let i = 0; i < emailChars.length; i++) {
+                let charCode = emailChars[i].charCodeAt(0);
+                // Xử lý chỉ các ký tự alphabet, bỏ qua ký tự đặc biệt
+                if (charCode >= 65 && charCode <= 90) {
+                    charCode = ((charCode - 65 + key[i % key.length]) % base) + 65; // A-Z
+                } else if (charCode >= 97 && charCode <= 122) {
+                    charCode = ((charCode - 97 + key[i % key.length]) % base) + 97; // a-z
+                }
+                encryptedEmail += String.fromCharCode(charCode);
+            }
+
+            // Hiển thị kết quả
+            document.getElementById('result').innerHTML = `<strong>Bản mã hóa:</strong> ${encryptedEmail}`;
+        }
+    </script>
+</body>
+</html>
+
+<!-- Đọc Email từ Input:
+
+const email = document.getElementById('email').value;
+Đoạn này lấy giá trị từ trường nhập liệu (input) của người dùng.
+Định nghĩa khóa Vigenere:
+
+const key = [2, 7, 15, 27];
+Đây là mảng khóa được cung cấp trong đề bài, tương ứng với việc mã hóa theo hệ số đã cho.
+Xử lý từng ký tự trong email:
+
+const emailChars = email.split('');
+Tách từng ký tự của chuỗi email thành mảng để xử lý tuần tự từng ký tự.
+Mã hóa từng ký tự:
+
+Sử dụng công thức mã hóa Vigenere với phép dịch dựa trên bảng chữ cái và khóa:
+Đối với ký tự hoa (A-Z): charCode = ((charCode - 65 + key[i % key.length]) % base) + 65;
+Đối với ký tự thường (a-z): charCode = ((charCode - 97 + key[i % key.length]) % base) + 97;
+Hiển thị kết quả mã hóa:
+
+document.getElementById('result').innerHTML = <strong>Bản mã hóa:</strong> ${encryptedEmail};
+Sau khi mã hóa, kết quả sẽ được hiển thị trong phần div có ID là result -->

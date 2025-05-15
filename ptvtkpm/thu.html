@@ -1,0 +1,228 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .form_row {
+            margin-bottom: 10px;
+            display: flex;
+        }
+
+        .label{
+            min-width: 150px;
+        }
+
+        .input{
+            flex: 1;
+        }
+
+        button{
+            background-color: rgb(3, 59, 24);
+            color: aliceblue;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mức thu hằng năm</h1>
+    <div class="form_row">
+        <label class="label" for="inputText">Nhập số tiền</label>
+        <input class="input" type="number" id="inputText">            
+    </div>
+    <div class="form_row">
+        <label class="label" for="inputText">Thời gian bắt đầu</label>
+        <input class="input" type="date" id="inputText">            
+    </div>
+    <div class="form_row">
+        <label class="label" for="inputText">Thời gian kết thúc</label>
+        <input class="input" type="date" id="inputText">            
+    </div>
+    <div class="form_row">
+        <label for="note">Note:</label><br>
+        <textarea name="note" id="note" rows="20" cols="50"></textarea>         
+    </div>
+    <button>Cancel</button>
+    <button>Gửi</button>
+    
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiết lập định mức thu hàng năm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+            color: #555;
+        }
+        input[type="number"], input[type="date"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .cancel-btn {
+            background-color: #dc3545;
+        }
+        .cancel-btn:hover {
+            background-color: #c82333;
+        }
+        .hidden {
+            display: none;
+        }
+        .summary-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        .summary-table th, .summary-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .summary-table th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Thiết lập định mức thu hàng năm</h1>
+
+    <form id="setup-form">
+        <label for="amount">Mức thu (VND):</label>
+        <input type="number" id="amount" name="amount" placeholder="Nhập mức thu hàng năm" required>
+
+        <label for="start-date">Ngày bắt đầu thu:</label>
+        <input type="date" id="start-date" name="start-date" required>
+
+        <label for="end-date">Ngày kết thúc thu:</label>
+        <input type="date" id="end-date" name="end-date" required>
+
+        <label for="notes">Nội dung ghi chú:</label>
+        <textarea id="notes" name="notes" rows="4" placeholder="Nhập ghi chú nếu có"></textarea>
+
+        <button type="submit">Xác nhận</button>
+        <button type="button" class="cancel-btn" onclick="cancelSetup()">Hủy</button>
+    </form>
+
+    <div id="confirmation-popup" class="hidden">
+        <h2>Xác nhận</h2>
+        <p>Bạn có chắc chắn muốn xác nhận định mức thu này không?</p>
+        <button onclick="confirmSetup()">Xác nhận</button>
+        <button onclick="hideConfirmation()">Hủy</button>
+    </div>
+
+    <div id="summary-section" class="hidden">
+        <h2>Danh sách thống kê định mức thu hàng năm</h2>
+        <table class="summary-table">
+            <thead>
+                <tr>
+                    <th>Mức thu (VND)</th>
+                    <th>Ngày bắt đầu</th>
+                    <th>Ngày kết thúc</th>
+                    <th>Ghi chú</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="summary-amount"></td>
+                    <td id="summary-start-date"></td>
+                    <td id="summary-end-date"></td>
+                    <td id="summary-notes"></td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="resetForm()">Thêm mới</button>
+    </div>
+</div>
+
+<script>
+    function cancelSetup() {
+        if (confirm("Bạn có chắc muốn hủy?")) {
+            document.getElementById("setup-form").reset();
+        }
+    }
+
+    document.getElementById('setup-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        showConfirmation();
+    });
+
+    function showConfirmation() {
+        document.getElementById('confirmation-popup').classList.remove('hidden');
+    }
+
+    function hideConfirmation() {
+        document.getElementById('confirmation-popup').classList.add('hidden');
+    }
+
+    function confirmSetup() {
+        // Ẩn popup xác nhận
+        hideConfirmation();
+
+        // Lấy dữ liệu từ form
+        const amount = document.getElementById('amount').value;
+        const startDate = document.getElementById('start-date').value;
+        const endDate = document.getElementById('end-date').value;
+        const notes = document.getElementById('notes').value;
+
+        // Hiển thị dữ liệu vào bảng thống kê
+        document.getElementById('summary-amount').innerText = amount;
+        document.getElementById('summary-start-date').innerText = startDate;
+        document.getElementById('summary-end-date').innerText = endDate;
+        document.getElementById('summary-notes').innerText = notes;
+
+        // Ẩn form và hiển thị bảng thống kê
+        document.getElementById('setup-form').classList.add('hidden');
+        document.getElementById('summary-section').classList.remove('hidden');
+    }
+
+    function resetForm() {
+        document.getElementById('setup-form').reset();
+        document.getElementById('setup-form').classList.remove('hidden');
+        document.getElementById('summary-section').classList.add('hidden');
+    }
+</script>
+
+</body>
+</html>

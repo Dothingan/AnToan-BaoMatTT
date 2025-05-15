@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shift Cipher & Vigenère Cipher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Shift & Vigenère Cipher Decryption</h2>
+
+        <!-- Input Ciphertext -->
+        <label for="ciphertext">Ciphertext:</label>
+        <input type="text" id="ciphertext" value="tyltsrekyreyfex">
+
+        <!-- Key for Vigenère Cipher -->
+        <label for="vigenereKey">Vigenère Key (if known):</label>
+        <input type="text" id="vigenereKey" placeholder="Enter key for Vigenère cipher">
+
+        <!-- Buttons for actions -->
+        <button id="shiftBtn">Shift Cipher Decryption</button>
+        <button id="vigenereBtn">Vigenère Cipher Decryption</button>
+
+        <!-- Result display -->
+        <div class="result">
+            <h4>Decryption Result</h4>
+            <pre id="resultText"></pre>
+        </div>
+    </div>
+
+    <script>
+        // Alphabet for reference
+        const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+
+        // Shift Cipher Decryption
+        function shiftDecrypt(text, shift) {
+            return text.split('').map(char => {
+                const lowerChar = char.toLowerCase();
+                const index = alphabet.indexOf(lowerChar);
+
+                if (index === -1) {
+                    return char; // Non-alphabet characters remain the same
+                }
+
+                let newIndex = (index - shift + 26) % 26;
+                return alphabet[newIndex];
+            }).join('');
+        }
+
+        // Vigenère Cipher Decryption
+        function vigenereDecrypt(text, key) {
+            const keyLength = key.length;
+            return text.split('').map((char, i) => {
+                const lowerChar = char.toLowerCase();
+                const index = alphabet.indexOf(lowerChar);
+
+                if (index === -1) {
+                    return char; // Non-alphabet characters remain the same
+                }
+
+                const keyChar = key[i % keyLength].toLowerCase();
+                const keyIndex = alphabet.indexOf(keyChar);
+
+                let newIndex = (index - keyIndex + 26) % 26;
+                return alphabet[newIndex];
+            }).join('');
+        }
+
+        document.getElementById('shiftBtn').addEventListener('click', function () {
+            const ciphertext = document.getElementById('ciphertext').value;
+            let result = '';
+
+            // Try all possible shifts from 1 to 25
+            for (let shift = 1; shift < 26; shift++) {
+                result += `Shift by ${shift}: ${shiftDecrypt(ciphertext, shift)}\n`;
+            }
+
+            document.getElementById('resultText').textContent = result;
+        });
+
+        document.getElementById('vigenereBtn').addEventListener('click', function () {
+            const ciphertext = document.getElementById('ciphertext').value;
+            const key = document.getElementById('vigenereKey').value;
+
+            if (!key) {
+                alert("Please provide a key for Vigenère cipher.");
+                return;
+            }
+
+            const result = vigenereDecrypt(ciphertext, key);
+            document.getElementById('resultText').textContent = `Decrypted using Vigenère key "${key}": ${result}`;
+        });
+    </script>
+</body>
+</html>
+
+<!-- 
+sd md5 mã hoá password
+// Sử dụng trong Node.js
+const CryptoJS = require("crypto-js");
+
+// Hàm mã hóa password
+function hashPassword(password) {
+    return CryptoJS.MD5(password).toString();
+}
+
+// Ví dụ sử dụng
+const password = "your_password_here";
+const hashedPassword = hashPassword(password);
+console.log("Giá trị băm MD5:", hashedPassword); -->

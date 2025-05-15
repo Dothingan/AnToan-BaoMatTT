@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSA Encryption</title>
+</head>
+<body>
+    <h2>RSA Encryption</h2>
+    <label for="message">Thông điệp cần mã hóa:</label>
+    <input type="text" id="message" value="IlovePhenikaa"><br><br>
+    
+    <button onclick="rsaEncrypt()">Mã hóa và ghi ra tệp</button>
+
+    <p id="ciphertext"></p>
+
+    <script>
+        // Hàm tính gcd
+        function gcd(a, b) {
+            while (b != 0) {
+                let t = b;
+                b = a % b;
+                a = t;
+            }
+            return a;
+        }
+
+        // Hàm tính nghịch đảo modulo
+        function modInverse(e, phi) {
+            let m0 = phi, t, q;
+            let x0 = 0, x1 = 1;
+
+            if (phi == 1) return 0;
+
+            while (e > 1) {
+                // q là thương số
+                q = Math.floor(e / phi);
+                t = phi;
+
+                // phi là phần dư, tương đương với e % phi
+                phi = e % phi;
+                e = t;
+                t = x0;
+
+                x0 = x1 - q * x0;
+                x1 = t;
+            }
+
+            // đảm bảo x1 là số dương
+            if (x1 < 0) {
+                x1 += m0;
+            }
+
+            return x1;
+        }
+
+        // Hàm RSA mã hóa
+        function rsaEncrypt() {
+            const p = 19;
+            const q = 37;
+            const n = p * q; // 703
+            const phi = (p - 1) * (q - 1); // 648
+            let e = 65537; // Khóa công khai thường dùng
+
+            // Kiểm tra nếu gcd(e, phi) != 1 thì chọn lại e
+            if (gcd(e, phi) != 1) {
+                e = 17; // Một giá trị e khác nếu gcd không thỏa mãn
+            }
+
+            // Tính khóa bí mật d
+            const d = modInverse(e, phi);
+
+            // Chuẩn bị thông điệp để mã hóa
+            const message = document.getElementById("message").value;
+            const m = message.split('').map(char => char.charCodeAt(0)); // Chuyển thông điệp thành mã ASCII
+
+            // Mã hóa từng ký tự
+            const encryptedMessage = m.map(char => Math.pow(char, e) % n);
+
+            // Hiển thị bản mã
+            document.getElementById("ciphertext").innerText = "Bản mã: " + encryptedMessage.join(',');
+
+            // Ghi bản mã vào tệp rsa-encrypt.dat
+            const blob = new Blob([encryptedMessage.join(',')], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'rsa-encrypt.dat';
+            link.click();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Substitution Cipher</title>
+    <style>
+        .form_row {
+            margin-bottom: 10px;
+            display: flex;
+        }
+
+        .label{
+            min-width: 80px;
+        }
+
+        .input{
+            flex: 1;
+        }
+
+        button{
+            background-color: rgb(3, 59, 24);
+            color: aliceblue;
+        }
+    </style>
+    <script>
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const keySubstitution = "QWERTYUIOPLKJHGFDSAZXCVBNM"; // Khóa thay thế: một chuỗi sắp xếp lại bảng chữ cái
+
+        // Mã hóa
+        function maThayThe() {
+            let inputText = document.getElementById("inputText").value.toUpperCase();
+            let outputText = '';
+
+            for (let i = 0; i < inputText.length; i++) {
+                let char = inputText[i];
+
+                // Nếu ký tự là chữ cái, thay thế bằng ký tự tương ứng trong khóa
+                if (alphabet.includes(char)) {
+                    let index = alphabet.indexOf(char);
+                    outputText += keySubstitution[index];
+                } else {
+                    outputText += char;  // Các ký tự khác giữ nguyên
+                }
+            }
+
+            document.getElementById("outputText").value = outputText;
+        }
+
+        // Giải mã
+        function giaiMaThayThe() {
+            let inputGiaiMa = document.getElementById("outputText").value.toUpperCase();
+            let banRo = '';
+
+            for (let i = 0; i < inputGiaiMa.length; i++) {
+                let char = inputGiaiMa[i];
+
+                // Nếu ký tự là chữ cái, giải mã bằng cách tìm trong khóa
+                if (keySubstitution.includes(char)) {
+                    let index = keySubstitution.indexOf(char);
+                    banRo += alphabet[index];
+                } else {
+                    banRo += char;  // Các ký tự khác giữ nguyên
+                }
+            }
+
+            document.getElementById("banRo").value = banRo;
+        }
+    </script>
+</head>
+<body>
+    <div class="containt">
+        <div class="form_row">
+            <label class="label" for="inputText">Input text</label>
+            <input class="input" type="text" id="inputText">            
+        </div>
+        <div class="form_row">
+            <label class="label" for="outputText">Ban ma</label>
+            <input class="input" type="text" id="outputText" readonly>   
+        </div>
+        <div class="form_row">
+            <label class="label" for="banRo">Ban ro</label>
+            <input class="input" type="text" id="banRo" readonly>
+        </div>
+        <div class="button">
+            <button type="button" onclick="maThayThe()">Mã hoá</button>
+            <button type="button" onclick="giaiMaThayThe()">Giải mã</button>
+        </div>
+    </div>
+</body>
+</html>

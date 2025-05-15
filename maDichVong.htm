@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encryption App</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 20%;
+            background-color: #f8f8f8;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 10px 0;
+        }
+
+        .sidebar button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar button:hover {
+            background-color: #45a049;
+        }
+
+        .content {
+            width: 80%;
+            padding: 20px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        #caesar {
+            display: block;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+        }
+
+        input[type="number"], input[type="checkbox"] {
+            margin: 10px 0;
+        }
+
+        .buttons {
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+    <script>
+        // Function to switch between pages
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+                page.style.display = 'none';
+            });
+            document.getElementById(pageId).style.display = 'block';
+        }
+
+        // Caesar Cipher Encryption
+        function caesarCipher(text, shift, decrypt = false) {
+            if (decrypt) shift = -shift;
+            return text.split('').map(char => {
+                if (char.match(/[a-z]/i)) {
+                    const code = char.charCodeAt(0);
+                    const isUpperCase = (code >= 65 && code <= 90);
+                    const base = isUpperCase ? 65 : 97;
+                    return String.fromCharCode(((code - base + shift) % 26 + 26) % 26 + base);
+                }
+                return char; // non-alphabetical characters stay the same
+            }).join('');
+        }
+
+        // Encrypt the text
+        function encrypt() {
+            const text = document.getElementById('clearText').value;
+            const shift = parseInt(document.getElementById('shift').value);
+            const cipherText = caesarCipher(text, shift);
+            document.getElementById('cipherText').value = cipherText;
+        }
+
+        // Decrypt the text
+        function decrypt() {
+            const text = document.getElementById('cipherText').value;
+            const shift = parseInt(document.getElementById('shift').value);
+            const clearText = caesarCipher(text, shift, true);
+            document.getElementById('clearText').value = clearText;
+        }
+
+        // Toggle visibility of clear text
+        function toggleClearText() {
+            const clearText = document.getElementById('clearText');
+            clearText.style.display = clearText.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Read file and load into textarea
+        function readFile() {
+            const fileInput = document.getElementById('fileInput').files[0];
+            if (fileInput) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('clearText').value = e.target.result;
+                }
+                reader.readAsText(fileInput);
+            }
+        }
+
+    </script>
+
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Encryption Methods</h2>
+            <ul>
+                <li><button onclick="showPage('caesar')">Caesar Cipher</button></li>
+                <li><button onclick="showPage('affine')">Affine Cipher</button></li>
+                <li><button onclick="showPage('des')">DES</button></li>
+                <li><button onclick="showPage('rsa')">RSA</button></li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <!-- Caesar Cipher Page -->
+            <div id="caesar" class="page">
+                <h2>Caesar Cipher</h2>
+                
+                <!-- Input File and Text -->
+                <label for="fileInput">Upload File (optional):</label>
+                <input type="file" id="fileInput" onchange="readFile()">
+
+                <label for="clearText">Input Text:</label>
+                <textarea id="clearText" placeholder="Enter text or upload a file..."></textarea>
+
+                <div>
+                    <label for="shift">Input Key:</label>
+                    <input type="number" id="shift" value="3">
+                </div>
+
+                <label for="cipherText">Cipher Text:</label>
+                <textarea id="cipherText" placeholder="Ciphertext will appear here..."></textarea>
+
+                <div>
+                    <label for="hideClearText">Hide Clear Text</label>
+                    <input type="checkbox" id="hideClearText" onchange="toggleClearText()">
+                </div>
+
+                <div class="buttons">
+                    <button onclick="encrypt()">Encrypt</button>
+                    <button onclick="decrypt()">Decrypt</button>
+                </div>
+            </div>
+
+            <!-- Other pages can be added similarly -->
+            <div id="affine" class="page" style="display:none;">
+                <h2>Affine Cipher</h2>
+                <p>This section is under development.</p>
+            </div>
+
+            <div id="des" class="page" style="display:none;">
+                <h2>DES Encryption</h2>
+                <p>This section is under development.</p>
+            </div>
+
+            <div id="rsa" class="page" style="display:none;">
+                <h2>RSA Encryption</h2>
+                <p>This section is under development.</p>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>
